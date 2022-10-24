@@ -1,10 +1,10 @@
 import http from 'axios';
-import secretValues  from './secret.js'
+import secretValues from './secret.js'
 
 const Auth = secretValues.Auth;
 const CompanyId = secretValues.CompanyId;
-const PostPrizeEndpoint = secretValues.PostPrizeEndpoint;
-const DeletePrizeEndpoint = secretValues.DeletePrizeEndpoint;
+const PostPoolEndpoint = secretValues.PostPoolEndpoint;
+const DeletePoolEndpoint = secretValues.DeletePoolEndpoint;
 
 
 
@@ -14,7 +14,7 @@ function listAndDelete() {
 
   http({
     method: 'post',
-    url: PostPrizeEndpoint,
+    url: PostPoolEndpoint,
     data: Data,
     headers: {
       Authorization: Auth
@@ -22,10 +22,10 @@ function listAndDelete() {
   })
     .then((response) => {
       for (let i = 0; i < response.data.data.length; i++) {
-        let prizeId = response.data.data[i].id;
+        let PoolId = response.data.data[i].id;
         http({
           method: 'delete',
-          url: `${DeletePrizeEndpoint}${prizeId}`,
+          url: `${DeletePoolEndpoint}${PoolId}`,
           headers: {
             Authorization: Auth
           }
@@ -34,7 +34,7 @@ function listAndDelete() {
     }, (error) => {
       console.log(error);
     })
-    .then(()=> console.log('All prizes successfully deleted'));
+    .then(() => console.log('All pools successfully deleted'));
 }
 
 
