@@ -10,7 +10,7 @@ const DeletePrizeEndpoint = secretValues.DeletePrizeEndpoint;
 
 function listAndDelete() {
 
-  const Data = { "companyId": CompanyId, "perPage": 1000, "pageNumber": 0, "sortBy": "createdAt", "order": "DESC", "searchTerm": "" };
+  const Data = { "companyId": CompanyId, "perPage": 80, "pageNumber": 0, "sortBy": "createdAt", "order": "DESC", "searchTerm": "" };
 
   http({
     method: 'post',
@@ -27,19 +27,19 @@ function listAndDelete() {
           method: 'delete',
           url: `${DeletePrizeEndpoint}${prizeId}`,
           headers: {
-            Authorization: Auth
+            Authorization: Auth,
+            keepAlive: true
           }
         });
       }
     }, (error) => {
       console.log(error);
     })
-    .then(()=> console.log('All prizes successfully deleted'));
+    .then(()=> console.log('Request processed'));
 }
 
 
 listAndDelete();
 
-console.log(CompanyId);
 
 
