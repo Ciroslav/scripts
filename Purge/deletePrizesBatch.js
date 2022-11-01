@@ -7,7 +7,7 @@ const PostPrizeEndpoint = secretValues.PostPrizeEndpoint;
 const DeletePrizeEndpoint = secretValues.DeletePrizeEndpoint;
 
 
-let prizesId = [];
+var prizesId = [];
 
 async function list(number) {
 let chunkSize = 40;
@@ -35,7 +35,7 @@ let chunkSize = 40;
 
 
 function deleteRequest(prizeId) {
-  http({
+  return http({
     method: 'delete',
     url: `${DeletePrizeEndpoint}${prizeId}`,
     headers: {
@@ -44,27 +44,31 @@ function deleteRequest(prizeId) {
   });
 }
 
-const deleteAll = async function(number) {
-list(number).then(()=>
+ function deleteAll(number) {
+ list(number).then(()=>
   {
     const batchSize = 40;
     var numberOfBatches =  Math.ceil(prizesId.length/batchSize);
-    for (let n =0; n<numberOfBatches; n++)
-    {
-    let Batch = prizesId.slice(n*batchSize,(n+1)*batchSize);
+    console.log(numberOfBatches);
   
     
-       for (let i =0;i<Batch.length;i++) {
-         deleteRequest(Batch[i]);
-        
-      }
-      console.log('Batch number ',n+1,' deleted');
+  async function deleteBatch() {  
+    for (let n =0; n<numberOfBatches;n++){
+
+    let Batch = prizesId.slice(n*batchSize,(n+1)*batchSize);
+  
+    await Promise.all(Batch.map(el => deleteRequest(el)))
+
+    console.log('Batch number ',n+1,' deleted');
+
     }
   }
+   deleteBatch();
+}
 )
 }
 
-deleteAll(200);
+deleteAll(400);
 
 
 
