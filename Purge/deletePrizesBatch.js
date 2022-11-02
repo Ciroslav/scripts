@@ -35,8 +35,7 @@ function deleteRequest(prizeId) {
 async function deleteBatch(numberOfBatches, prizesId, batchSize) {
   for (let n = 0; n < numberOfBatches; n++) {
     let Batch = prizesId.slice(n * batchSize, (n + 1) * batchSize);
-    let testArr = []
-    await Promise.all(Batch.map(el => { deleteRequest(el); testArr.push(el); console.log(testArr.length, "ID", el) }));
+    await Promise.all(Batch.map(el => { deleteRequest(el) }));
     console.log('Batch number ', n + 1, ' deleted!');
 
   }
@@ -44,17 +43,13 @@ async function deleteBatch(numberOfBatches, prizesId, batchSize) {
 
 async function list(number, chunkSize = 40) {
   let numberOfChunks = Math.ceil(number / chunkSize);
-  console.log("AAAAAAAAAAAAAAAAAAAAAANumber of chunks ", numberOfChunks)
-  const arr = [...Array(numberOfChunks).keys()];
-  console.log("BBBBBBBBBBBBBBBB chunks to send from array", numberOfChunks)
+  const promiseIterrator = [...Array(numberOfChunks).keys()];
   let prizesId = [];
 
 
-  const responses = await Promise.all(arr.map(el => postRequest(el)));
+  const responses = await Promise.all(promiseIterrator.map(el => postRequest(el)));
   const parsedResponse = (responses.map((el => el.data.data))).flat();
   parsedResponse.map(el => prizesId.push(el.id));
-  console.log("BBBBBBBBBBBBBBB Number of prizes from responses", prizesId.length)
-  console.log("without duplicates", [... new Set(prizesId)].length);
   return prizesId;
 }
 
@@ -65,18 +60,13 @@ async function main(number) {
     const prizesId = await list(number)
     const numberOfBatches = Math.ceil(prizesId.length / batchSize);
     console.log(`Number of batches: ${numberOfBatches}\nBatch size: ${batchSize}`);
-
-
     deleteBatch(numberOfBatches, prizesId, batchSize);
   }
   catch (err) {
     console.log(err);
   }
-
-
-
 }
-list(1000)
 
+main(200);
 
 
